@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Interesados</title>
+    <style>
+        :root { --primary: #0088cc; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 14px; color: #333; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 5px rgba(0,136,204,0.3); }
+        button { width: 100%; background-color: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; }
+        button:hover { background-color: #0077b3; }
+        .footer-text { font-size: 11px; color: #888; text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Formulario de Registro</h2>
+    <form id="leadForm">
+        <label>Nombre Completo</label>
+        <input type="text" id="nombre" placeholder="Escribe tu nombre" required>
+
+        <label>Edad</label>
+        <input type="number" id="edad" placeholder="Tu edad" required>
+
+        <label>WhatsApp / Teléfono</label>
+        <input type="tel" id="telefono" placeholder="Ej: +57 300 123 4567" required>
+
+        <label>País</label>
+        <input type="text" id="pais" placeholder="¿En qué país vives?" required>
+
+        <label>Departamento / Estado / Región</label>
+        <input type="text" id="region" placeholder="Escribe tu estado o provincia" required>
+
+        <button type="submit" id="btnEnviar">Enviar Datos</button>
+        <p class="footer-text">Al enviar, un asesor se contactará contigo por Telegram o WhatsApp.</p>
+    </form>
+</div>
+
+<script>
+    document.getElementById("leadForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btnEnviar");
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
+        // TUS DATOS DE CONFIGURACIÓN
+        const token = "8141071040:AAFWmPHqgerCWA2VtNz5KaytdHA6tFPcXes";
+        const chatId = "6772781129";
+
+        // CAPTURA DE VALORES ESCRITOS
+        const nombre = document.getElementById("nombre").value;
+        const edad = document.getElementById("edad").value;
+        const telefono = document.getElementById("telefono").value;
+        const pais = document.getElementById("pais").value;
+        const region = document.getElementById("region").value;
+
+        const mensaje = `🔔 *UN NUEVO MARICA*:\n\n` +
+                        `👤 *Nombre:* ${nombre}\n` +
+                        `🎂 *Edad:* ${edad} años\n` +
+                        `📞 *Tel:* ${telefono}\n` +
+                        `🌎 *País:* ${pais}\n` +
+                        `📍 *Región:* ${region}`;
+
+        const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: mensaje,
+                parse_mode: 'Markdown'
+            })
+        })
+        .then(response => {
+            if(response.ok) {
+                alert("✅ ¡Gracias! Hemos recibido tus datos.");
+                document.getElementById("leadForm").reset();
+            } else {
+                alert("❌ Hubo un error en el envío.");
+            }
+        })
+        .catch(error => {
+            alert("Error de conexión: " + error);
+        })
+        .finally(() => {
+            btn.innerText = "Enviar Datos";
+            btn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>
